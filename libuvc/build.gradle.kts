@@ -8,7 +8,6 @@ import java.util.Properties
 android {
     namespace = "com.jiangdg.uvccamera"
     compileSdk = 35
-    buildToolsVersion = "35.0.0"
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -30,10 +29,6 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 }

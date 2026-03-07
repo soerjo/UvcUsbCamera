@@ -13,7 +13,9 @@
       "Read(//c/Users/ryoha/AndroidStudioProjects/AndroidUSBCamera/**)",
       "Bash(mv app/src/main/java/com/jiangdg/utils/imageloader/GlideLoader.kt.tmp app/src/main/java/com/jiangdg/utils/imageloader/GlideLoader.kt)",
       "Bash(./gradlew assembleRelease:*)",
-      "Bash(./gradlew :app:processDebugMainManifest:*)"
+      "Bash(./gradlew :app:processDebugMainManifest:*)",
+      "Bash(ls:*)",
+      "Bash(./gradlew :app:assembleDebug:*)"
     ]
   }
 }

@@ -60,21 +60,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation("com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.50")
-    implementation("com.afollestad.material-dialogs:core:3.3.0")
-
-    implementation("com.tencent.bugly:crashreport:4.1.9.3")
-    implementation("com.tencent.bugly:nativecrashreport:3.9.2")
-
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
-    // webpdecoder not available, using Glide's built-in support
-    implementation("com.tencent:mmkv:1.3.5")
 
     implementation("androidx.multidex:multidex:2.0.1")
-    // For debug online
     implementation(project(":libausbc"))
-
-    // demo
-//    implementation("com.github.jiangdongguo.AndroidUSBCamera:libausbc:3.3.3")
 }
