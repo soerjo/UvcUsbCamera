@@ -1,0 +1,21 @@
+## This file must *NOT* be checked into Version Control Systems,
+# as it contains information specific to your local configuration.
+#
+# Location of the Android SDK. This is only required by Gradle if you're using
+# a version of Gradle older than 2.14, or if you have explicitly set it in
+# your gradle build.
+# For Windows users: Use double backslashes (\\) to escape paths.
+# For Mac/Linux users: Use forward slashes (/)
+#
+#sdk.dir=/path/to/your/Android/Sdk
+
+# Location of the Android NDK. This is required for building the native libraries (libuvc).
+# If you have Android Studio installed, the NDK is usually in the SDK directory.
+#
+# For Windows users:
+# ndk.dir=C\\:\\\\Users\\\\YourUsername\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\ndk\\\\26.1.10909125
+#
+# For Mac/Linux users:
+# ndk.dir=/path/to/your/Android/Sdk/ndk/26.1.10909125
+#
+# Alternatively, you can set the NDK_HOME environment variable instead of using ndk.dir.

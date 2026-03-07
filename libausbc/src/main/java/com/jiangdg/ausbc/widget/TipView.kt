@@ -16,6 +16,7 @@
 package com.jiangdg.ausbc.widget
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Handler
@@ -46,20 +47,11 @@ class TipView : AppCompatTextView {
     }
 
     private fun init(context: Context?) {
-        hideAnim.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {
-            }
-
-            override fun onAnimationEnd(animation: Animator?) {
+        hideAnim.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
                 if (this@TipView.visibility == View.VISIBLE) {
                     this@TipView.visibility = View.GONE
                 }
-            }
-
-            override fun onAnimationCancel(animation: Animator?) {
-            }
-
-            override fun onAnimationStart(animation: Animator?) {
             }
         })
     }

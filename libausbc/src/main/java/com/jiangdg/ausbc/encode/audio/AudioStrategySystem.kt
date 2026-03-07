@@ -36,6 +36,7 @@ class AudioStrategySystem : IAudioStrategy {
     private var mAudioRecord: AudioRecord? = null
 
     override fun initAudioRecord() {
+    @Suppress("MissingPermission")
         try {
             Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
             mAudioRecord = AudioRecord(AUDIO_RECORD_SOURCE, SAMPLE_RATE,

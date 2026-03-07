@@ -16,13 +16,16 @@
 package com.jiangdg.demo
 
 import android.Manifest.permission.*
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.PermissionChecker
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.gyf.immersionbar.ImmersionBar
 import com.jiangdg.ausbc.utils.ToastUtils
 import com.jiangdg.ausbc.utils.Utils
 import com.jiangdg.demo.databinding.ActivityMainBinding
@@ -34,17 +37,20 @@ import com.jiangdg.demo.databinding.ActivityMainBinding
  */
 class MainActivity : AppCompatActivity() {
     private var mWakeLock: PowerManager.WakeLock? = null
-    private var immersionBar: ImmersionBar? = null
     private lateinit var viewBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStatusBar()
-        viewBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
-//        replaceDemoFragment(DemoMultiCameraFragment())
-        replaceDemoFragment(DemoFragment())
-//        replaceDemoFragment(GlSurfaceFragment())
+        try {
+            setStatusBar()
+            viewBinding = ActivityMainBinding.inflate(layoutInflater)
+            setContentView(viewBinding.root)
+            checkAndRequestPermissions()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error in onCreate", e)
+            e.printStackTrace()
+            finish()
+        }
     }
 
     override fun onStart() {
@@ -59,24 +65,50 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun replaceDemoFragment(fragment: Fragment) {
-        val hasCameraPermission = PermissionChecker.checkSelfPermission(this, CAMERA)
-        val hasStoragePermission =
-            PermissionChecker.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
-        if (hasCameraPermission != PermissionChecker.PERMISSION_GRANTED || hasStoragePermission != PermissionChecker.PERMISSION_GRANTED) {
+    private fun checkAndRequestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        // Check camera permission
+        if (ContextCompat.checkSelfPermission(this, CAMERA) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(CAMERA)
+        }
+
+        // Check record audio permission
+        if (ContextCompat.checkSelfPermission(this, RECORD_AUDIO) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(RECORD_AUDIO)
+        }
+
+        // Check storage permission (only for Android 12 and below)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(WRITE_EXTERNAL_STORAGE)
+            }
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, CAMERA)) {
-                ToastUtils.show(R.string.permission_tip)
+                ToastUtils.show("Camera permissions are required for this app")
             }
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(CAMERA, WRITE_EXTERNAL_STORAGE, RECORD_AUDIO),
+                permissionsToRequest.toTypedArray(),
                 REQUEST_CAMERA
             )
-            return
+        } else {
+            // All permissions granted
+            replaceDemoFragment(DemoFragment())
         }
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, fragment)
-        transaction.commitAllowingStateLoss()
+    }
+
+    private fun replaceDemoFragment(fragment: Fragment) {
+        try {
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.fragment_container, fragment)
+            transaction.commitAllowingStateLoss()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error replacing fragment", e)
+            e.printStackTrace()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -85,25 +117,32 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
         when (requestCode) {
             REQUEST_CAMERA -> {
-                val hasCameraPermission = PermissionChecker.checkSelfPermission(this, CAMERA)
-                if (hasCameraPermission == PermissionChecker.PERMISSION_DENIED) {
-                    ToastUtils.show(R.string.permission_tip)
-                    return
+                var allGranted = true
+                for (result in grantResults) {
+                    if (result != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                        allGranted = false
+                        break
+                    }
                 }
-//                replaceDemoFragment(DemoMultiCameraFragment())
-                replaceDemoFragment(DemoFragment())
-//                replaceDemoFragment(GlSurfaceFragment())
+
+                if (allGranted) {
+                    replaceDemoFragment(DemoFragment())
+                } else {
+                    ToastUtils.show("Camera permissions are required")
+                }
             }
             REQUEST_STORAGE -> {
-                val hasCameraPermission =
-                    PermissionChecker.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE)
-                if (hasCameraPermission == PermissionChecker.PERMISSION_DENIED) {
-                    ToastUtils.show(R.string.permission_tip)
-                    return
+                val hasStoragePermission = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                } else {
+                    true
                 }
-                // todo
+                if (!hasStoragePermission) {
+                    ToastUtils.show("Storage permission is required")
+                }
             }
             else -> {
             }
@@ -112,17 +151,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        immersionBar= null
     }
 
     private fun setStatusBar() {
-        immersionBar = ImmersionBar.with(this)
-            .statusBarDarkFont(false)
-            .statusBarColor(R.color.black)
-            .navigationBarColor(R.color.black)
-            .fitsSystemWindows(true)
-            .keyboardEnable(true)
-        immersionBar?.init()
+        window.decorView.systemUiVisibility = (
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        )
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     companion object {

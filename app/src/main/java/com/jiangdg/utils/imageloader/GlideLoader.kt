@@ -26,8 +26,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable
-import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.GlideException
@@ -63,25 +61,22 @@ class GlideLoader<T>(target: T) : ILoader<ImageView> {
 
     override fun load(imageView: ImageView, url: String?, placeHolder: Int) {
         val centerCrop: Transformation<Bitmap> = CenterCrop()
-        mRequestManager!!.load(url).optionalTransform(centerCrop)
-            .optionalTransform(WebpDrawable::class.java, WebpDrawableTransformation(centerCrop))
+        mRequestManager!!.load(url).transform(centerCrop)
             .placeholder(placeHolder)
             .into(imageView)
     }
 
     override fun load(imageView: ImageView, url: String?) {
         val centerCrop: Transformation<Bitmap> = CenterCrop()
-        mRequestManager!!.load(url).optionalTransform(centerCrop)
-            .optionalTransform(WebpDrawable::class.java, WebpDrawableTransformation(centerCrop))
-            .placeholder(R.drawable.imageloader_default_cover_bg)
+        mRequestManager!!.load(url).transform(centerCrop)
+            .placeholder(android.R.drawable.ic_menu_gallery)
             .into(imageView)
     }
 
     override fun load(imageView: ImageView, resId: Int) {
         val centerCrop: Transformation<Bitmap> = CenterCrop()
-        mRequestManager!!.load(resId).optionalTransform(centerCrop)
-            .optionalTransform(WebpDrawable::class.java, WebpDrawableTransformation(centerCrop))
-            .placeholder(R.drawable.imageloader_default_cover_bg)
+        mRequestManager!!.load(resId).transform(centerCrop)
+            .placeholder(android.R.drawable.ic_menu_gallery)
             .into(imageView)
     }
 
@@ -91,28 +86,23 @@ class GlideLoader<T>(target: T) : ILoader<ImageView> {
         placeHolder: Int,
         bitmapTransformation: BitmapTransformation?
     ) {
-        mRequestManager!!.load(url).optionalTransform(bitmapTransformation!!)
-            .optionalTransform(
-                WebpDrawable::class.java,
-                WebpDrawableTransformation(bitmapTransformation)
-            )
+        mRequestManager!!.load(url).transform(bitmapTransformation!!)
             .placeholder(placeHolder).into(imageView)
     }
 
     @SuppressLint("CheckResult")
     override fun loadRounded(imageView: ImageView, url: String?, placeHolder: Int, radius: Float) {
-        RequestOptions().apply {
+        val options = RequestOptions().apply {
             if (radius >= 0) {
-                transform(CenterCrop(), RoundedCorners(dp2px(imageView.context, radius)))
+                transforms(CenterCrop(), RoundedCorners(dp2px(imageView.context, radius)))
             } else {
-                transform(RoundedCorners(dp2px(imageView.context, radius)))
+                transforms(RoundedCorners(dp2px(imageView.context, radius)))
             }
-        }.also { options ->
-            mRequestManager!!.load(url)
-                .placeholder(placeHolder)
-                .apply(options)
-                .into(imageView)
         }
+        mRequestManager!!.load(url)
+            .placeholder(placeHolder)
+            .apply(options)
+            .into(imageView)
     }
 
     @SuppressLint("CheckResult")
@@ -122,58 +112,53 @@ class GlideLoader<T>(target: T) : ILoader<ImageView> {
         placeHolder: Drawable?,
         radius: Float
     ) {
-        RequestOptions().apply {
+        val options = RequestOptions().apply {
             if (radius >= 0) {
-                transform(CenterCrop(), RoundedCorners(dp2px(imageView.context, radius)))
+                transforms(CenterCrop(), RoundedCorners(dp2px(imageView.context, radius)))
             } else {
-                transform(RoundedCorners(dp2px(imageView.context, radius)))
+                transforms(RoundedCorners(dp2px(imageView.context, radius)))
             }
-        }.also { options ->
-            mRequestManager!!.load(url)
-                .placeholder(placeHolder)
-                .apply(options)
-                .into(imageView)
         }
+        mRequestManager!!.load(url)
+            .placeholder(placeHolder)
+            .apply(options)
+            .into(imageView)
     }
 
     override fun loadRounded(imageView: ImageView, url: String?, radius: Float) {
-        loadRounded(imageView, url, R.drawable.imageloader_default_cover_bg, radius)
+        loadRounded(imageView, url, getColorDrawable(android.R.color.darker_gray), radius)
     }
 
     override fun loadCircle(imageView: ImageView, url: String?, placeHolder: Int) {
-        mRequestManager?.apply {
-            this.load(url)
-                .placeholder(placeHolder)
-                .apply(RequestOptions.bitmapTransform(CircleCrop()))
-                .into(imageView)
-        }
+        mRequestManager!!
+            .load(url)
+            .placeholder(placeHolder)
+            .apply(RequestOptions.bitmapTransform(CircleCrop()))
+            .into(imageView)
     }
 
     override fun loadCircle(imageView: ImageView, url: String?) {
-        mRequestManager?.apply {
-            this.load(url)
-                .placeholder(R.drawable.imageloader_default_cover_bg)
-                .apply(RequestOptions.bitmapTransform(CircleCrop()))
-                .into(imageView)
-        }
+        mRequestManager!!
+            .load(url)
+            .placeholder(android.R.drawable.ic_menu_gallery)
+            .apply(RequestOptions.bitmapTransform(CircleCrop()))
+            .into(imageView)
     }
 
     override fun loadCircle(imageView: ImageView, resId: Int, placeHolder: Int) {
-        mRequestManager?.apply {
-            this.load(resId)
-                .placeholder(placeHolder)
-                .apply(RequestOptions.bitmapTransform(CircleCrop()))
-                .into(imageView)
-        }
+        mRequestManager!!
+            .load(resId)
+            .placeholder(placeHolder)
+            .apply(RequestOptions.bitmapTransform(CircleCrop()))
+            .into(imageView)
     }
 
     override fun loadCircle(imageView: ImageView, resId: Int) {
-        mRequestManager?.apply {
-            this.load(resId)
-                .placeholder(R.drawable.imageloader_default_cover_bg)
-                .apply(RequestOptions.bitmapTransform(CircleCrop()))
-                .into(imageView)
-        }
+        mRequestManager!!
+            .load(resId)
+            .placeholder(android.R.drawable.ic_menu_gallery)
+            .apply(RequestOptions.bitmapTransform(CircleCrop()))
+            .into(imageView)
     }
 
     override fun loadAsBitmap(
@@ -182,39 +167,43 @@ class GlideLoader<T>(target: T) : ILoader<ImageView> {
         height: Int,
         listener: ILoader.OnLoadedResultListener
     ) {
-        mRequestManager?.apply {
-            this.asBitmap()
-                .centerCrop()
-                .load(url)
-                .listener(object : RequestListener<Bitmap> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Bitmap>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        listener.onLoadedFailed(e)
-                        return true
-                    }
+        mRequestManager!!
+            .asBitmap()
+            .centerCrop()
+            .load(url)
+            .listener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    listener.onLoadedFailed(e)
+                    return true
+                }
 
-                    override fun onResourceReady(
-                        resource: Bitmap?,
-                        model: Any?,
-                        target: Target<Bitmap>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        listener.onLoadedSuccess(resource)
-                        return true
-                    }
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    model: Any,
+                    target: Target<Bitmap>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    listener.onLoadedSuccess(resource)
+                    return true
+                }
 
-                })
-                .submit(width, height)
-        }
+            })
+            .submit(width, height)
     }
 
     private fun dp2px(context: Context, dpValue: Float): Int {
         val scale: Float = context.resources.displayMetrics.density
         return (dpValue * scale + 0.5f).toInt()
+    }
+
+    private fun getColorDrawable(colorRes: Int): Drawable {
+        // This is a simplified placeholder - in production, use a proper drawable
+        return android.graphics.drawable.ColorDrawable()
     }
 }

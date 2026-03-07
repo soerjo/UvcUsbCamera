@@ -134,15 +134,9 @@ class PreviewImageView: AppCompatImageView {
         initBorderPath(w, h)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         try {
-            canvas?.saveLayer(mSrcRectF, null)
-            // 缩小画布
-//            val sx = 1.0f * (width - borderWidth) / width
-//            val sy  = 1.0f * (height - borderWidth) / height
-//            canvas?.scale(sx, sy, width / 2.0f, height / 2.0f)
-
+            canvas.saveLayer(mSrcRectF, null)
             // 绘制原图
             super.onDraw(canvas)
 
@@ -155,15 +149,15 @@ class PreviewImageView: AppCompatImageView {
             mClipPath.reset()
             mClipPath.addRoundRect(mSrcRectF, mSrcRadii, Path.Direction.CCW)
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-                canvas?.drawPath(mClipPath, mPaint)
+                canvas.drawPath(mClipPath, mPaint)
             } else {
                 mTmpPath.reset()
                 mTmpPath.addRect(mSrcRectF, Path.Direction.CCW)
                 mTmpPath.op(mClipPath, Path.Op.DIFFERENCE)
-                canvas?.drawPath(mTmpPath, mPaint)
+                canvas.drawPath(mTmpPath, mPaint)
             }
             mPaint.xfermode = null
-            canvas?.restore()
+            canvas.restore()
 
             // 绘制边框
             drawBorders(canvas)
@@ -175,7 +169,7 @@ class PreviewImageView: AppCompatImageView {
         }
     }
 
-    private fun drawBorders(canvas: Canvas?) {
+    private fun drawBorders(canvas: Canvas) {
         if (mTheme == Theme.LIGHT || !canShowImageBorder) return
         mClipPath.reset()
         mPaint.isAntiAlias = true
@@ -183,10 +177,10 @@ class PreviewImageView: AppCompatImageView {
         mPaint.color = Color.parseColor("#FFFFFF")
         mPaint.style = Paint.Style.STROKE
         mClipPath.addRoundRect(mBorderRectF, mBorderRadii, Path.Direction.CCW)
-        canvas?.drawPath(mClipPath, mPaint)
+        canvas.drawPath(mClipPath, mPaint)
     }
 
-    private fun drawBorderProgress(canvas: Canvas?) {
+    private fun drawBorderProgress(canvas: Canvas) {
         mPaint.reset()
         mPaint.isAntiAlias = true
         mPaint.strokeWidth = borderWidth
@@ -195,7 +189,7 @@ class PreviewImageView: AppCompatImageView {
 
         mProgressDstPath?.let {
             if (! it.isEmpty) {
-                canvas?.drawPath(it, mPaint)
+                canvas.drawPath(it, mPaint)
             }
         }
     }
@@ -272,8 +266,7 @@ class PreviewImageView: AppCompatImageView {
         val progress = PropertyValuesHolder.ofFloat("progress", getProgress(), 1.0f)
         mBreathAnimation = ObjectAnimator.ofPropertyValuesHolder(this,  scaleX,  scaleY, progress).apply {
             addListener(object :AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    super.onAnimationEnd(animation)
+                override fun onAnimationEnd(animation: Animator) {
                     isNewImageLoading = false
                     setProgress(0.0f)
                     mBreathAnimation = null

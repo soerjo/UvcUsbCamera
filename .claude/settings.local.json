@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew build:*)",
+      "Bash(grep:*)",
+      "Bash(rm:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(./gradlew :libausbc:compileDebugKotlin:*)",
+      "Bash(sed:*)",
+      "Bash(./gradlew :app:compileDebugKotlin:*)",
+      "Bash(./gradlew assembleDebug:*)",
+      "Bash(find:*)",
+      "Read(//c/Users/ryoha/AndroidStudioProjects/AndroidUSBCamera/**)",
+      "Bash(mv app/src/main/java/com/jiangdg/utils/imageloader/GlideLoader.kt.tmp app/src/main/java/com/jiangdg/utils/imageloader/GlideLoader.kt)",
+      "Bash(./gradlew assembleRelease:*)",
+      "Bash(./gradlew :app:processDebugMainManifest:*)"
+    ]
+  }
+}

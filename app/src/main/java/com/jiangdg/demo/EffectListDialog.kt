@@ -112,7 +112,7 @@ class EffectListDialog(activity: Activity) : BaseDialog(activity, portraitWidthR
                     R.drawable.ic_tab_line_blue
                 )
                 mFilterTabBtn?.typeface = Typeface.DEFAULT
-                mFilterTabBtn?.setTextColor(getDialog().context.resources.getColor(R.color.common_a8_black))
+                mFilterTabBtn?.setTextColor(getDialog().context.resources.getColor(android.R.color.black))
                 mFilterTabBtn?.setCompoundDrawablesWithIntrinsicBounds(
                     0,
                     0,
@@ -134,7 +134,7 @@ class EffectListDialog(activity: Activity) : BaseDialog(activity, portraitWidthR
             R.drawable.ic_tab_line_blue
         )
         mAnimTabBtn?.typeface = Typeface.DEFAULT
-        mAnimTabBtn?.setTextColor(getDialog().context.resources.getColor(R.color.common_a8_black))
+        mAnimTabBtn?.setTextColor(getDialog().context.resources.getColor(android.R.color.black))
         mAnimTabBtn?.setCompoundDrawablesWithIntrinsicBounds(
             0,
             0,
@@ -178,7 +178,7 @@ class EffectListDialog(activity: Activity) : BaseDialog(activity, portraitWidthR
                     R.drawable.ic_tab_line_blue
                 )
                 mAnimTabBtn?.typeface = Typeface.DEFAULT
-                mAnimTabBtn?.setTextColor(getDialog().context.resources.getColor(R.color.common_a8_black))
+                mAnimTabBtn?.setTextColor(getDialog().context.resources.getColor(android.R.color.black))
                 mAnimTabBtn?.setCompoundDrawablesWithIntrinsicBounds(
                     0,
                     0,
@@ -198,7 +198,7 @@ class EffectListDialog(activity: Activity) : BaseDialog(activity, portraitWidthR
                     R.drawable.ic_tab_line_blue
                 )
                 mFilterTabBtn?.typeface = Typeface.DEFAULT
-                mFilterTabBtn?.setTextColor(getDialog().context.resources.getColor(R.color.common_a8_black))
+                mFilterTabBtn?.setTextColor(getDialog().context.resources.getColor(android.R.color.black))
                 mFilterTabBtn?.setCompoundDrawablesWithIntrinsicBounds(
                     0,
                     0,
@@ -260,10 +260,10 @@ private class EffectListAdapter :
         helper.setText(R.id.effectName, item.name)
         helper.getView<ImageView>(R.id.effectIv).also {
             item.coverResId?.apply {
-                ImageLoaders.of(mContext).loadCircle(it, this, R.drawable.effect_none)
+                ImageLoaders.of(mContext).loadCircle(it, this, android.R.drawable.ic_menu_gallery)
                 return@also
             }
-            ImageLoaders.of(mContext).loadCircle(it, item.coverUrl, R.drawable.effect_none)
+            ImageLoaders.of(mContext).loadCircle(it, item.coverUrl, android.R.drawable.ic_menu_gallery)
         }
         helper.addOnClickListener(R.id.effectIv)
         // update check status
