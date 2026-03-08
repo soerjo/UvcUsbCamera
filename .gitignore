@@ -10,3 +10,8 @@
 .externalNativeBuild
 .tags*
 .cxx/
+/.kotlin/
+
+# Module build directories
+*/build/
+**/build/
