@@ -22,10 +22,6 @@ A powerful UVC (USB Video Class) camera engine for Android that allows you to op
 - **Kotlin First** - Written entirely in Kotlin with coroutines support
 - **Hilt DI** - Dependency injection with Hilt
 
-## Screenshots
-
-<img src="images/logo.png" alt="AUSBC Logo" width="120"/>
-
 ## Documentation
 
 | Document | Description |
