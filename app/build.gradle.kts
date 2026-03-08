@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -45,9 +47,6 @@ android {
         viewBinding = true
         buildConfig = true
     }
-
-    // libuvc module should need set local.properties
-    // eg: ndk.dir=D\:\\Developer\\Environment\\AndroidSdks\\ndk\\21.0.6113669
 }
 
 dependencies {
@@ -62,5 +61,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
 
     implementation("androidx.multidex:multidex:2.0.1")
+
+    // Legacy module (will be deprecated)
     implementation(project(":libausbc"))
+
+    // New architecture modules
+    implementation(project(":libausbc-core"))
+    implementation(project(":libausbc-camera"))
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
 }

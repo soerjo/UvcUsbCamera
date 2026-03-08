@@ -16,14 +16,29 @@
 package com.jiangdg.demo
 
 import com.jiangdg.ausbc.base.BaseApplication
+import dagger.hilt.android.HiltAndroidApp
 
 /**
+ * Demo Application with Hilt support
+ *
+ * Extends BaseApplication for legacy support while adding Hilt for new architecture.
  *
  * @author Created by jiangdg on 2022/2/28
+ * @author Updated for restructuring plan
  */
+@HiltAndroidApp
 class DemoApplication: BaseApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        onInitializeNewArchitecture()
+    }
+
+    /**
+     * Initialize new architecture components
+     */
+    private fun onInitializeNewArchitecture() {
+        // New architecture initialization will go here
+        // This is called after BaseApplication initialization
     }
 }

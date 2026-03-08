@@ -20,7 +20,14 @@ dependencyResolutionManagement {
 
 include(":app")
 
-// For debug online
+// Core modules (new architecture)
+include(":libausbc-core")
+include(":libausbc-camera")
+include(":libausbc-render")
+include(":libausbc-encode")
+include(":libausbc-utils")
+
+// Legacy modules (to be migrated)
 include(":libausbc")
 include(":libuvc")
 include(":libnative")

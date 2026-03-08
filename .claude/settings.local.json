@@ -15,7 +15,18 @@
       "Bash(./gradlew assembleRelease:*)",
       "Bash(./gradlew :app:processDebugMainManifest:*)",
       "Bash(ls:*)",
-      "Bash(./gradlew :app:assembleDebug:*)"
+      "Bash(./gradlew :app:assembleDebug:*)",
+      "Bash(./gradlew compileDebugKotlin:*)",
+      "Bash(./gradlew :libausbc-core:compileDebugKotlin:*)",
+      "Bash(./gradlew :libausbc-utils:compileDebugKotlin:*)",
+      "Bash(./gradlew :libausbc-core:dependencies:*)",
+      "Bash(/tmp/encode_result_ext.kt:*)",
+      "Read(//tmp/**)",
+      "Bash(/tmp/fix_extensions.txt:*)",
+      "Bash(mv:*)",
+      "Bash(./gradlew :libausbc-render:compileDebugKotlin:*)",
+      "Bash(./gradlew :libausbc-encode:compileDebugKotlin:*)",
+      "Bash(python:*)"
     ]
   }
 }
