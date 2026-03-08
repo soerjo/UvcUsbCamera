@@ -1,356 +1,556 @@
-![logo.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/906db02b1dbc49669c38f870b6df2e96~tplv-k3u1fbpfcp-watermark.image?)
+# AUSBC (Android USBCamera)
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.22-blue.svg)](https://kotlinlang.org)
+[![Platform](https://img.shields.io/badge/Platform-Android-green.svg)](https://www.android.com)
 
-# AUSBC&ensp;[![](https://jitpack.io/v/jiangdongguo/AndroidUSBCamera.svg)](https://jitpack.io/#jiangdongguo/AndroidUSBCamera) [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19)
+A powerful UVC (USB Video Class) camera engine for Android that allows you to open UVC cameras without system permissions.
 
-&emsp;Flexible and useful UVC camera engine on Android platform, you can use it to simply  open your uvc camera (supporting multi-road cameras) without  any system permissions . The only thing you should do is that confirming your Android device must support OTG function. So, welcom to use **AUSBC3.0** and welcom to **star** & **fork** & **issues**!
+## Features
 
-![multi-road camera](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/75a8f700d97c4de4979c9d0927764af9~tplv-k3u1fbpfcp-watermark.image?)
+- **No System Permission Required** - Works with UVC cameras directly via USB
+- **Multi-Camera Support** - Open and manage multiple UVC cameras simultaneously
+- **OpenGL ES Rendering** - GPU-based rendering with real-time effects support
+- **Media Encoding** - H.264 video encoding, AAC audio encoding, and MP4 muxing
+- **Audio Recording** - Support for system microphone and UAC (USB Audio Class) audio
+- **Camera Controls** - Runtime parameter adjustments (brightness, contrast, zoom, focus, etc.)
+- **Multiple Preview Modes** - TextureView and SurfaceView support
+- **Rotation Support** - Camera view rotation (0°, 90°, 180°, 270°)
+- **Capture Support** - Photo capture, video recording, and audio recording
+- **Clean Architecture** - Modern modular architecture with separated concerns
+- **Kotlin First** - Written entirely in Kotlin with coroutines support
+- **Hilt DI** - Dependency injection with Hilt
 
-&emsp;[@ Example showing](https://live.csdn.net/v/226993)
+## Screenshots
 
+<img src="images/logo.png" alt="AUSBC Logo" width="120"/>
 
+## Documentation
 
-Feature
--------
+| Document | Description |
+|----------|-------------|
+| **[Quick Start Guide](docs/QUICKSTART.md)** | Get your UVC camera running in 5 minutes |
+| **[Usage Guide](docs/USAGE.md)** | Complete integration guide with examples |
+| **[FAQ](FAQ.md)** | Frequently asked questions |
+| **[VERSION.md](VERSION.md)** | Version history and changelog |
+| **[CLAUDE.md](CLAUDE.md)** | Project architecture and developer guide |
 
-- Support opening multi-road camera;
-- Support opening uvc camera on Android 4.4+;
-- Support previewing 480p、720p、1080p，etc;
-- Support adding effects with OpenGL ES 2.0;
-- Support capture photo(`.jpg`)、viedo(`.mp4`/`.h264`/`yuv`) and audio(`pcm`/`mp3`/`aac`)
-- Support rotating camera view;
-- Support offscreen rendering;
-- Support recording media along with acquiring YUV/RGBA/PCM/H.264/AAC stream, you can push it to your media server;
-- Support acquiring all resolutions and usb devices, etc;
-- Support acquiring system or device mic(UAC) audio data;
-- Support armeabi-v7a, arm64-v8a, x86 & x86_64;
+### Quick Links
 
-Usages
--------
+- **[Installation](#installation)** - How to add the library
+- **[Quick Start](#quick-start)** - Basic usage example
+- **[Full Usage Guide](docs/USAGE.md)** - Comprehensive documentation with examples
 
-&emsp;`AUSBC 3.0`  was refactored by kotlin and It is simpler to use and more feature-rich. So, I highly recommend you to use the current version and let's build it together.
+## Requirements
 
-- **Get AUSBC**
+| Requirement | Version |
+|-------------|---------|
+| Min SDK | 24 (Android 7.0+) |
+| Target SDK | 35 (Android 15) |
+| Compile SDK | 35 |
+| Java | 17 |
+| Kotlin | 1.9.22 |
+| NDK | 27.0.12077973 (for native builds) |
 
-&emsp;First,  add it in your root **build.gradle** or **settings.gradle** at the end of repositories: 
+## Module Structure
 
-```groovy
-allprojects {
+### New Modular Architecture (Recommended)
+
+The project is transitioning to a clean, modular architecture with separated concerns:
+
+| Module | Description |
+|--------|-------------|
+| **libausbc-core** | Core abstractions, domain models, error handling, result types, and repository interfaces |
+| **libausbc-camera** | Camera implementations (UvcCamera, UvcCameraV2), data sources, repositories, and lifecycle management |
+| **libausbc-render** | OpenGL ES rendering engine with effects support |
+| **libausbc-encode** | Media encoding (H.264, AAC) and MP4 muxing |
+| **libausbc-utils** | Shared utilities (permissions, Flow extensions, logging) |
+
+### Legacy Modules (Being Migrated)
+
+| Module | Description |
+|--------|-------------|
+| **libausbc** | Main Kotlin library with camera abstractions and base classes |
+| **libuvc** | Native JNI library for USB camera communication (ndk-build) |
+| **libnative** | Native library with LAME MP3 encoder and YUV utilities (CMake) |
+
+### Demo Application
+
+| Module | Description |
+|--------|-------------|
+| **app** | Demo application showing library usage with examples |
+
+## Installation
+
+### Gradle
+
+Add the dependency to your module's `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.github.jiangdongguo:AndroidUSBCamera:3.3.0")
+}
+```
+
+Add JitPack repository to your `settings.gradle.kts`:
+
+```kotlin
+dependencyResolutionManagement {
     repositories {
         google()
-        jcenter()
-        maven { url "https://jitpack.io" }
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
-&emsp;Second, add the dependency in your **app.gradle** , latest tag is [![](https://jitpack.io/v/jiangdongguo/AndroidUSBCamera.svg)](https://jitpack.io/#jiangdongguo/AndroidUSBCamera):
+### From Source
 
-```groovy
-dependencies {
-    implementation 'com.github.jiangdongguo.AndroidUSBCamera:libausbc:latest_tag'
-}
+```bash
+# Clone the repository
+git clone https://github.com/jiangdongguo/AndroidUSBCamera.git
+cd AndroidUSBCamera
+
+# Build the project
+./gradlew build
+
+# Install the library modules
+./gradlew :libausbc:publishToMavenLocal
 ```
 
-- **Simply usage**
+## Quick Start
 
-&emsp; As for how to use this module correctly,  just  making your Fragment or Activity implement **CameraFragment** or **CameraActivity**.
+### 1. Add USB Device Filter
+
+Create `app/src/main/res/xml/default_device_filter.xml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<usb>
+    <!-- All UVC devices -->
+    <usb-device class="239" subclass="2" />
+
+    <!-- Your specific device -->
+    <usb-device product-id="xxxx" vendor-id="xxxx" />
+</usb>
+```
+
+### 2. Extend CameraFragment
 
 ```kotlin
-class DemoFragment: CameraFragment() {
-    private var mViewBinding: FragmentUvcBinding? = null
+class MyCameraFragment : CameraFragment() {
 
-    override fun getRootView(inflater: LayoutInflater, container: ViewGroup?): View? {
-        if (mViewBinding == null) {
-            mViewBinding = FragmentUvcBinding.inflate(inflater, container, false)
-        }
-        return mViewBinding?.root
-    }
-
-    // if you want offscreen render
-    // please return null
     override fun getCameraView(): IAspectRatio? {
-        return mViewBinding?.tvCameraRender
+        // Return TextureView or SurfaceView
+        return binding.textureView
     }
 
-    // if you want offscreen render
-    // please return null, the same as getCameraView()
     override fun getCameraViewContainer(): ViewGroup? {
-        return mViewBinding?.container
+        // Return the container for camera view
+        return binding.cameraContainer
     }
 
-    // camera open status callback
-    override fun onCameraState(self: ICamera, 
-                               code: ICameraStateCallBack.State,
-                               msg: String?) {
-        when (code) {
-            ICameraStateCallBack.State.OPENED -> handleCameraOpened()
-            ICameraStateCallBack.State.CLOSED -> handleCameraClosed()
-            ICameraStateCallBack.State.ERROR -> handleCameraError()
+    override fun onCameraState(state: CameraStatus) {
+        when(state) {
+            CameraStatus.OPENED -> {
+                // Camera opened successfully
+            }
+            CameraStatus.CLOSED -> {
+                // Camera closed
+            }
+            CameraStatus.ERROR -> {
+                // Camera error occurred
+            }
         }
     }
-    
-    override fun getGravity(): Int = Gravity.TOP
 }
 ```
 
-&emsp;The most important is that you should override `getRootView()`/`getCameraViewContainer()`/
-`getCameraView()` at least which means fragment's root view 、texture  or surface view and it's container。Of course, the same as **CameraActivity** and now you can see the uvc camera preview。
-
-- **Advanced usage**
-
-&emsp;If you want some custom configurations, you can do like this in your **DemoFragment**: 
+### 3. Configure Camera Request
 
 ```kotlin
-// if you want to open a camera default
-// please override getDefaultCamera()
-override fun getDefaultCamera(): UsbDevice? {
-    return super.getDefaultCamera()
-}
-
-// if you want to custom camera requst
-// please override getCameraRequest()
 override fun getCameraRequest(): CameraRequest {
     return CameraRequest.Builder()
-    .setPreviewWidth(1280) // camera preview width
-    .setPreviewHeight(720) // camera preview height
-    .setRenderMode(CameraRequest.RenderMode.OPENGL) // camera render mode
-    .setDefaultRotateType(RotateType.ANGLE_0) // rotate camera image when opengl mode
-    .setAudioSource(CameraRequest.AudioSource.SOURCE_AUTO) // set audio source
-    .setPreviewFormat(CameraRequest.PreviewFormat.FORMAT_YUYV) // set preview format, MJPEG recommended
-    .setAspectRatioShow(true) // aspect render,default is true
-    .setCaptureRawImage(false) // capture raw image picture when opengl mode
-    .setRawPreviewData(false)  // preview raw image when opengl mode
-    .create()
+        .setPreviewWidth(640)
+        .setPreviewHeight(480)
+        .setRenderMode(CameraRequest.RenderMode.OPENGL)
+        .setDefaultRotateType(RotateType.ANGLE_0)
+        .setAudioSource(CameraRequest.AudioSource.SOURCE_SYS_MIC)
+        .setPreviewFormat(CameraRequest.PreviewFormat.FORMAT_MJPEG)
+        .setAspectRatioShow(true)
+        .setCaptureRawImage(false)
+        .setRawPreviewData(false)
+        .create()
 }
-
-
 ```
 
-&emsp;Of course, you can also capture a **jpg** image or a **mp4** video or  a **mp3** audio file and update resolution or different uvc camera and acquring the stream of **H264/AAC/YUV/PCM**  by calling those method:
+### 4. Capture Features
 
 ```kotlin
-// capture jpg image
-captureImage(callBack, savePath)
-// capture mp4 video
+// Capture image
+captureImage(object : ICaptureCallBack {
+    override fun onCaptureBegin() {}
+    override fun onCaptureComplete(path: String) {
+        // Image saved at path
+    }
+    override fun onCaptureError(error: String) {}
+}, savePath)
+
+// Start video recording
 captureVideoStart(callBack, path, durationInSec)
+
+// Stop video recording
 captureVideoStop()
-// capture stream(H.264/AAC) only
-captureStreamStart()
-captureStreamStop()
-// capture mp4 video
-captureVideoStart(callBack, path, durationInSec)
-captureVideoStop()
-// capture mp3 audio
+
+// Start audio recording
 captureAudioStart(callBack, path)
+
+// Stop audio recording
 captureAudioStop()
-// play mic in real time
-startPlayMic(callBack)
-stopPlayMic()
-// rotate camera
-// base on opening opengl es
-setRotateType(type)
-// switch different camera
-switchCamera(UsbDevice)
-// update resolution
-updateResolution(width, height)
-// get all preview sizes
-getAllPreviewSizes(aspectRatio)
-// acquire encode data(H.264 or AAC)
-addEncodeDataCallBack(callBack)
-// acquire raw data(NV21 or RGBA)
-setPreviewDataCallBack(callBack)
-// get current camera
-getCurrentCamera()
-// get current camera status
-isCameraOpened()
-// get all camera device list
-getDeviceList()
 ```
 
-&emsp;Or, camera configuration:
+### 5. Camera Parameter Controls
 
 ```kotlin
-setZoom(0)
-setSharpness(0)
-setHue(0)
-setSaturation(0)
-setContrast(0)
-setGamma(0)
-setGain(0)
-setAutoWhiteBalance(true)
-setAutoFocus(true)
-// send custom command to camera
-sendCameraCommand(command)
+// Get current camera
+val camera = getCurrentCamera() as? CameraUVC
+
+// Adjust parameters
+camera?.setBrightness(128)
+camera?.setContrast(128)
+camera?.setZoom(100)
+
+// Auto focus
+camera?.setAutoFocus(true)
+
+// Custom camera command
+camera?.sendCameraCommand(UVCCamera.CAMERA_COMMAND, value)
 ```
 
-&emsp;For more advanced features, you can even add some **filters** to your camera.This library providers some default filters, sush as **EffectBlackWhite**、**EffectSoul** and **EffectZoom**, and more filters will be added in the future.Of coure, you can also relize your own filters by extending **AbstractEffect**. For example：
+## Modern API (New Architecture)
+
+The new architecture provides a coroutine-based API with Flow support:
+
+### Using ICamera Interface
 
 ```kotlin
-// First, extending AbstractEffect
-class EffectBlackWhite(ctx: Context) : AbstractEffect(ctx) {
+class MyViewModel @Inject constructor(
+    private val cameraRepository: ICameraRepository
+) : ViewModel() {
 
-    override fun getId(): Int = ID
+    private val _cameraState = MutableStateFlow<CameraState>(CameraState.Idle)
+    val cameraState: StateFlow<CameraState> = _cameraState.asStateFlow()
 
-    override fun getClassifyId(): Int = CameraEffect.CLASSIFY_ID_FILTER
-
-    override fun getVertexSourceId(): Int = R.raw.base_vertex
-
-    override fun getFragmentSourceId(): Int = R.raw.effect_blackw_fragment
-
-    companion object {
-        const val ID = 100
-    }
-}
-
-// Second, adding or updating or removing filter
-addRenderEffect(effect)
-removeRenderEffect(effect)
-updateRenderEffect(classifyId, effect)
-```
-
-&emsp;At last, If you want to realize streaming, maybe **IPusher** and **AusbcPusher** can help you.
-
-- open multi-road camera
-
-&emsp;If you want to open multi-road camera, you can make your Fragment or Activity extend **MultiCameraFragment** or **MultiCameraActivity**.Just do like this and more details please look up **DemoMultiCameraFragment**：
-
-```kotlin
-class DemoMultiCameraFragment : MultiCameraFragment(), ICameraStateCallBack {
-
-    // a camera be attached
-    override fun onCameraAttached(camera: MultiCameraClient.Camera) {}
-    
-	// a camera be detached
-    override fun onCameraDetached(camera: MultiCameraClient.Camera) {}
-
-    // a camera be connected
-    override fun onCameraConnected(camera: MultiCameraClient.Camera) {
-  		camera.openCamera(textureView, getCameraRequest())
-        camera.setCameraStateCallBack(this)
-    }
-
-    // a camera be disconnected
-    override fun onCameraDisConnected(camera: MultiCameraClient.Camera) {
-         camrea.closeCamera()
-    }
-
-    // a camera be opened or closed or error
-    override fun onCameraState(
-        self: MultiCameraClient.Camera,
-        code: ICameraStateCallBack.State,
-        msg: String?) {
-		when (code) {
-            ICameraStateCallBack.State.OPENED -> handleCameraOpened()
-            ICameraStateCallBack.State.CLOSED -> handleCameraClosed()
-            ICameraStateCallBack.State.ERROR -> handleCameraError()
+    suspend fun openCamera(request: CameraRequest) {
+        when (val result = cameraRepository.openCamera(request)) {
+            is CameraResult.Success -> {
+                _cameraState.value = CameraState.Opened
+            }
+            is CameraResult.Error -> {
+                _cameraState.value = CameraState.Error(result.error)
+            }
         }
     }
 
-    override fun getRootView(inflater: LayoutInflater, container: ViewGroup?): View {
-        return rootView
+    fun getPreviewFrames(): Flow<PreviewFrame> {
+        return cameraRepository.getPreviewFrameFlow()
     }
-    
-    // [optional]
-    // If you want to open the specified camera,
-    // you need to let isAutoRequestPermission() false.
-    // And then you need to call requestPermission(device) in your own Fragment/Activity
-    // when onAttachDev() called, default is true.
-    protected fun isAutoRequestPermission() = true
 }
 ```
 
+### Dependency Injection with Hilt
 
-
-- Debug online
-
-&emsp;If you want to debug the project online or modify something, those steps you should do:
-
-&emsp;**First**, modifying the **Settings.gradle** file and making those to module. 
-
-```groovy
-include ':app'
-
-// For debug online
-include ':libausbc'
-include ':libuvc'
-include ':libnative'
-include ':libuvccommon'
+```kotlin
+@HiltAndroidApp
+class MyApplication : Application()
 ```
 
-&emsp;**Second**, let **app.gradle** dependenced on `':libausbc'` .
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object CameraModule {
 
-```groovy
-dependencies {
-
-    // For debug online
-    implementation project(':libausbc')
-
-    // demo
-    //implementation 'com.github.jiangdongguo.AndroidUSBCamera:libausbc:latest_tag'
+    @Provides
+    @Singleton
+    fun provideCameraRepository(
+        dataSource: IUvcCameraDataSource
+    ): ICameraRepository {
+        return CameraRepository(dataSource)
+    }
 }
 ```
 
+## Camera Request Configuration
 
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `previewWidth` | Int | Preview width (default: 640) |
+| `previewHeight` | Int | Preview height (default: 480) |
+| `renderMode` | RenderMode | OPENGL (GPU effects) or MEDIAN (direct) |
+| `rotateType` | RotateType | ANGLE_0, ANGLE_90, ANGLE_180, ANGLE_270 |
+| `audioSource` | AudioSource | SOURCE_SYS_MIC, SOURCE_AUTO, SOURCE_UAC |
+| `previewFormat` | PreviewFormat | FORMAT_MJPEG or FORMAT_YUYV |
+| `aspectRatioShow` | Boolean | Maintain aspect ratio (default: true) |
+| `captureRawImage` | Boolean | Capture raw image data (default: false) |
+| `rawPreviewData` | Boolean | Get raw preview data callback (default: false) |
 
-[@ 中文文档](https://juejin.cn/post/7115229806844706847/)
+## Render Effects
 
+The library supports custom OpenGL ES effects:
 
+### Built-in Effects
 
-Demo
--------
+| Effect | Description |
+|--------|-------------|
+| `EffectBlackWhite` | Black and white filter |
+| `EffectSoul` | Soul/ghost effect |
+| `EffectZoom` | Zoom effect |
 
-![](https://www.pgyer.com/app/qrcode/fVo5)
+### Custom Effects
 
-&emsp;[AUSBC.apk](https://github.com/jiangdongguo/AndroidUSBCamera/blob/master/app/release/app-release.apk)
+```kotlin
+abstract class AbstractEffect {
+    abstract fun getId(): Int
+    abstract fun getName(): String
+    abstract fun getShader(): String
+    abstract fun draw(textureId: Int, texMatrix: Float[])
+}
 
+// Add effect
+addRenderEffect(myEffect)
 
-Version
--------
+// Remove effect
+removeRenderEffect(myEffect)
 
-[Update details](https://github.com/jiangdongguo/AndroidUSBCamera/blob/master/VERSION.md)
+// Update effect
+updateRenderEffect(classifyId, newEffect)
+```
 
-Q & A
--------
+## Multi-Camera Support
 
-[FAQ](https://github.com/jiangdongguo/AndroidUSBCamera/blob/master/FAQ.md)
+```kotlin
+class MultiCameraFragment : MultiCameraFragment() {
 
+    override fun getCameraViewContainer(): ViewGroup? {
+        return binding.cameraContainer
+    }
 
-Homepage & Help
--------
+    override fun getCameraView(): IAspectRatio? {
+        // Return null for multi-camera (will create multiple views)
+        return null
+    }
 
-[1. JUEJIN](https://juejin.cn/user/1311062343296222)
+    // Get list of connected cameras
+    val cameras = getDeviceList()
 
-[2. CSDN（Update stopped）](https://blog.csdn.net/andrexpert)
+    // Switch to specific camera
+    switchCamera(usbDevice)
+}
+```
 
+## Audio Support
 
+### Audio Sources
 
-&emsp;If you have any question or fun ideas, please issues to me.  
-&emsp;Of course, you can also send me a **微信**   "`laojiang299`"   or a **EMAIL**  "`765067602@qq.com`".   
+| Source | Description |
+|--------|-------------|
+| `SOURCE_SYS_MIC` | System microphone |
+| `SOURCE_AUTO` | Auto-detect (prefers UAC if available) |
+| `SOURCE_UAC` | USB Audio Class microphone |
 
-&emsp;So, do not forget to send logs from location **Android/data/com.jiangdg.ausbc/files** and collect logcat information by executing command `adb shell logcat -v threadtime > usbcamera.log`
+### Audio Recording
 
+```kotlin
+// Start audio recording
+captureAudioStart(object : ICaptureCallBack {
+    override fun onCaptureBegin() {}
+    override fun onCaptureComplete(path: String) {
+        // Audio file saved
+    }
+    override fun onCaptureError(error: String) {}
+}, savePath)
+```
 
+## Build Configuration
 
-Thanks
--------
+### Native Build Setup
 
- [saki4510t/UVCCamera](https://github.com/saki4510t/UVCCamera)
+For native builds, configure NDK in `local.properties`:
 
+```properties
+ndk.dir=/path/to/your/Android/Sdk/ndk/27.0.12077973
+```
 
+Or set the `NDK_HOME` environment variable.
 
-License
--------
+### Build Commands
 
-```c
-Copyright 2017-2023 Jiangdongguo
+```bash
+# Build the entire project
+./gradlew build
+
+# Build debug APK
+./gradlew assembleDebug
+
+# Build release APK
+./gradlew assembleRelease
+
+# Clean build
+./gradlew clean
+
+# Build specific module
+./gradlew :libausbc:assembleRelease
+./gradlew :libausbc-core:assembleRelease
+```
+
+## Architecture
+
+### Legacy Camera Strategy Pattern
+
+```
+ICameraStrategy (deprecated)
+├── CameraUvcStrategy - USB UVC cameras
+├── Camera1Strategy - Legacy Camera API
+└── Camera2Strategy - Camera2 API
+```
+
+### Modern Runtime API
+
+```
+MultiCameraClient.ICamera
+└── CameraUVC - UVC camera implementation
+```
+
+### New Architecture
+
+```
+libausbc-core (Domain Layer)
+├── Contracts: ICamera, IRenderEngine, IEncodeEngine, IAudioStrategy
+├── Domain Models: CameraRequest, CameraState, PreviewSize, etc.
+├── Error Handling: CameraError (sealed class)
+└── Repositories: ICameraRepository, IDeviceRepository
+
+libausbc-camera (Data Layer)
+├── Camera: UvcCamera, UvcCameraV2
+├── Data Sources: IUvcCameraDataSource, IUsbDeviceDataSource
+├── Repositories: CameraRepository, DeviceRepository
+└── Lifecycle: CameraLifecycleManager, CameraStateManager
+
+libausbc-render (Presentation Layer)
+├── Engines: OpenGLRenderEngine, SurfaceRenderEngine
+└── Effects: EffectManager, RenderEffect
+
+libausbc-encode (Encoding Layer)
+├── Engines: H264EncodeEngine, AACEncodeEngine
+└── Muxer: Mp4MuxerV2
+
+libausbc-utils (Utilities)
+├── PermissionUtils
+├── FlowUtils
+└── Logger
+```
+
+## API Reference
+
+### CameraFragment
+
+| Method | Description |
+|--------|-------------|
+| `getCameraView()` | Returns the camera view (TextureView/SurfaceView) |
+| `getCameraViewContainer()` | Returns the container ViewGroup |
+| `getCameraRequest()` | Returns camera configuration |
+| `onCameraState()` | Camera state callbacks |
+| `getDefaultCamera()` | Auto-open specific USB device |
+| `captureImage()` | Capture photo |
+| `captureVideoStart()` | Start video recording |
+| `captureVideoStop()` | Stop video recording |
+| `captureAudioStart()` | Start audio recording |
+| `captureAudioStop()` | Stop audio recording |
+
+### Callbacks
+
+| Interface | Description |
+|-----------|-------------|
+| `ICameraStateCallBack` | Camera state (OPENED, CLOSED, ERROR) |
+| `ICaptureCallBack` | Capture status (photo/video/audio) |
+| `IPreviewDataCallBack` | Raw preview data (NV21/RGBA) |
+| `IEncodeDataCallBack` | Encoded data (H.264/AAC) |
+| `IPlayCallBack` | Real-time microphone playback |
+| `IDeviceConnectCallBack` | Device connect/disconnect events |
+
+## Version History
+
+See [VERSION.md](VERSION.md) for detailed version history.
+
+| Version | Date | Highlights |
+|---------|------|-------------|
+| 3.3.0 | 2022+ | Modern ICamera API, refactor |
+| 3.2.7 | 2022.08 | Multi-camera, camera parameters, Android S+ fix |
+| 3.2.0 | 2022.07 | Multi-road camera support |
+| 3.1.x | 2022.07 | Native memory leak fix |
+| 3.0.0 | 2022.07 | Kotlin refactor, OpenGL effects, capture support |
+| 2.x | 2020-2021 | Java version, basic UVC support |
+
+## FAQ
+
+See [FAQ.md](FAQ.md) for frequently asked questions.
+
+**Common Issues:**
+
+1. **Camera preview black screen?**
+   - Grant `android.permission.CAMERA` permission for targetSdk>=28
+   - Check device filter configuration
+
+2. **How to filter specific devices?**
+   - Add device to `default_device_filter.xml`
+
+3. **ANR on hot plug?**
+   - Update to version 3.2.7+
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## Dependencies
+
+### App Module
+- androidx.appcompat
+- androidx.core:core-ktx
+- com.google.android.material
+- org.jetbrains.kotlinx:kotlinx-coroutines-android 1.9.0
+- androidx.lifecycle 2.8.7
+- com.google.dagger:hilt-android 2.48
+
+### Library Modules
+- com.elvishew:xlog - Logging
+- libuvc - Native UVC implementation
+- libnative - Native utilities (LAME, YUV)
+
+## Third-Party Libraries
+
+- **libuvc** - USB video class library
+- **libjpeg-turbo** - JPEG codec
+- **libusb** - USB device access
+- **rapidjson** - JSON parsing
+- **LAME** - MP3 encoder
+
+## License
+
+```
+Copyright 2017-2022 jiangdongguo
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -358,3 +558,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+## Author
+
+**jiangdongguo**
+
+- GitHub: [@jiangdongguo](https://github.com/jiangdongguo)
+- Project: [AndroidUSBCamera](https://github.com/jiangdongguo/AndroidUSBCamera)
+
+## Related Projects
+
+- [UVCCameraLib](https://github.com/jiangdongguo/UVCCameraLib) - Native UVC NDK Library
+
+---
+
+**Note:** The project is undergoing a major architectural restructuring. Both legacy and new modular architectures coexist during the migration period. See [CLAUDE.md](CLAUDE.md) for detailed project documentation and migration status.
